@@ -1,9 +1,9 @@
 extern crate ffmpeg_next as ffmpeg;
 
 use std::env;
-use std::fs;
 use std::path::Path;
 use std::collections::HashSet;
+use walkdir::WalkDir;
 
 fn main() {
     // Get the target directory from command line arguments
@@ -23,15 +23,6 @@ fn main() {
 
     if target.is_dir() {
 
-        // Read the directory
-        let paths = match fs::read_dir(target) {
-            Ok(p) => p,
-            Err(e) => {
-                println!("Failed to read directory {}: {}", target.display(), e);
-                return;
-            }
-        };
-
         // Init the image counter
         let mut counter = 0;
 
@@ -48,9 +39,11 @@ fn main() {
         let mut unique_fps: HashSet<(u32, u32)> = HashSet::new();
 
         // Iterate over the files in the directory
-        for path in paths {
-            // Unwrap the path
-            let path = path.unwrap().path();
+        //for path in paths {
+        for path in WalkDir::new(&target).into_iter().filter_map(|e| e.ok()){
+
+            // Get the path
+            let path = path.path();
 
             // If the path has an extension
             if let Some(ext) = path.extension() {
