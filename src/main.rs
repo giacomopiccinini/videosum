@@ -45,10 +45,14 @@ fn main() {
             // Get the path
             let path = path.path();
 
+            if path.is_dir() {
+                continue;
+            }
+
             // If the path has an extension
             if let Some(ext) = path.extension() {
                 // If the extension is an image extension
-                if ["ts"].contains(&ext.to_str().unwrap()) {
+                if ["ts", "mp4", "mkv"].contains(&ext.to_str().unwrap()) {
 
                     // Increment the image counter
                     counter += 1;
@@ -118,7 +122,7 @@ fn main() {
         println!("Max Length: {} s", len_max);
     } else {
 
-        if ["ts"].contains(&target.extension().expect("Error with extension").to_str().unwrap()) {
+        if ["ts", "mp4", "mkv"].contains(&target.extension().expect("Error with extension").to_str().unwrap()) {
 
             match ffmpeg::format::input(&target) {
                 Ok(context) => {
